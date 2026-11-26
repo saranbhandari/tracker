@@ -1,0 +1,3285 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unique Nepal Academy — School Management Portal</title>
+  <style>
+    :root {
+      --primary: #22c55e;
+      /* Fresh Light-Medium Green */
+      --primary-dark: #16a34a;
+      /* Hover & Active Green */
+      --primary-soft: #dcfce7;
+      /* Soft Light Green Highlight */
+      --primary-tint: #f0fdf4;
+      /* Very Light Mint Tint */
+      --bg: #f8fdf9;
+      /* Crisp White-Mint Page Background */
+      --sidebar-bg: #e7f9ee;
+      /* Light Green Sidebar */
+      --sidebar-border: #bbf7d0;
+      /* Light Green Border */
+      --card-bg: #ffffff;
+      /* Pure White Cards */
+      --text-main: #14532d;
+      /* Clean Dark Green Text */
+      --text-muted: #4d7c5f;
+      /* Soft Sage Muted Text */
+      --border: #bbf7d0;
+      /* Light Green Card/Table Borders */
+      --success: #16a34a;
+      --warning: #d97706;
+      --danger: #dc2626;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      display: flex;
+      min-height: 100vh;
+      background-color: var(--bg);
+      color: var(--text-main);
+    }
+
+    /* Light Green & White Sidebar */
+    .sidebar {
+      width: 260px;
+      background-color: var(--sidebar-bg);
+      color: var(--text-main);
+      border-right: 1px solid var(--sidebar-border);
+      display: flex;
+      flex-direction: column;
+      padding: 20px 0;
+      flex-shrink: 0;
+    }
+
+    .brand {
+      padding: 0 20px 18px;
+      border-bottom: 1px solid var(--sidebar-border);
+      text-align: center;
+    }
+
+    .school-logo {
+      width: 76px;
+      height: 76px;
+      object-fit: cover;
+      border-radius: 50%;
+      background-color: #ffffff;
+      padding: 3px;
+      border: 2px solid var(--primary);
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(34, 197, 94, 0.15);
+    }
+
+    .logo-fallback {
+      width: 76px;
+      height: 76px;
+      border-radius: 50%;
+      background-color: #ffffff;
+      color: #15803d;
+      border: 2px solid var(--primary);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.2rem;
+      margin: 0 auto 10px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #15803d;
+      line-height: 1.3;
+    }
+
+    .brand-address {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .nav-links {
+      list-style: none;
+      margin-top: 16px;
+      padding: 0 12px;
+    }
+
+    .nav-links li {
+      padding: 12px 16px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #166534;
+      font-weight: 500;
+      transition: 0.2s;
+      font-size: 0.95rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-links li:hover {
+      background-color: #ffffff;
+      color: var(--primary-dark);
+    }
+
+    .nav-links li.active {
+      background-color: #ffffff;
+      color: var(--primary-dark);
+      font-weight: 700;
+      border: 1px solid var(--sidebar-border);
+      box-shadow: 0 2px 6px rgba(34, 197, 94, 0.12);
+    }
+
+    .nav-badge {
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      padding: 28px;
+      overflow-y: auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--primary);
+      position: relative;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-mini-logo {
+      width: 46px;
+      height: 46px;
+      object-fit: cover;
+      border-radius: 50%;
+      background: var(--primary-tint);
+      padding: 2px;
+      border: 1px solid var(--border);
+    }
+
+    .header-left h1 {
+      font-size: 1.35rem;
+      color: #15803d;
+    }
+
+    .header-left p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    /* Supabase Cloud Status Badge */
+    .db-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      background: var(--primary-tint);
+      color: #15803d;
+      border: 1px solid var(--border);
+    }
+
+    .db-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+
+    .db-status-pill.syncing .db-dot {
+      background: var(--warning);
+    }
+
+    .db-status-pill.error {
+      background: #fee2e2;
+      color: var(--danger);
+      border-color: #fecaca;
+    }
+
+    .db-status-pill.error .db-dot {
+      background: var(--danger);
+    }
+
+    /* Notification Bell & Dropdown */
+    .notif-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .notif-bell-btn {
+      position: relative;
+      background: var(--primary-tint);
+      border: 1.5px solid var(--border);
+      color: #15803d;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      padding: 0;
+      transition: 0.2s;
+    }
+
+    .notif-bell-btn:hover {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+    }
+
+    .notif-bell-btn svg {
+      width: 21px;
+      height: 21px;
+      stroke: #15803d;
+      fill: none;
+      stroke-width: 2;
+    }
+
+    .notif-count-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--danger);
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      min-width: 20px;
+      height: 20px;
+      border-radius: 10px;
+      padding: 0 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+    }
+
+    .notif-dropdown {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 50px;
+      width: 340px;
+      max-width: 90vw;
+      background: #ffffff;
+      border: 1.5px solid var(--border);
+      border-top: 4px solid var(--primary);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(20, 83, 45, 0.14);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .notif-dropdown.open {
+      display: block;
+    }
+
+    .notif-dropdown-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--primary-tint);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .notif-dropdown-header strong {
+      font-size: 0.9rem;
+      color: #15803d;
+    }
+
+    .notif-mark-read-btn {
+      background: none;
+      border: none;
+      color: var(--primary-dark);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .notif-list {
+      max-height: 320px;
+      overflow-y: auto;
+    }
+
+    .notif-item {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--primary-soft);
+      cursor: pointer;
+      transition: 0.15s;
+      display: block;
+      text-align: left;
+    }
+
+    .notif-item:hover {
+      background: var(--primary-tint);
+    }
+
+    .notif-item.unread {
+      background: #f2fcf5;
+      border-left: 4px solid var(--primary);
+    }
+
+    .notif-item-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #14532d;
+      margin-bottom: 3px;
+    }
+
+    .notif-item-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin-bottom: 4px;
+    }
+
+    .notif-item-time {
+      font-size: 0.72rem;
+      color: var(--primary-dark);
+      font-weight: 600;
+    }
+
+    .notif-empty {
+      padding: 20px 16px;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .role-switcher {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .role-switcher label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .role-switcher select {
+      width: auto;
+      background: var(--primary-tint);
+      border-color: var(--border);
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    /* Cards Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      box-shadow: 0 1px 4px rgba(34, 197, 94, 0.06);
+    }
+
+    .stat-card p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-card h2 {
+      font-size: 1.8rem;
+      color: #15803d;
+    }
+
+    /* Sections */
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 22px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 4px rgba(34, 197, 94, 0.05);
+      overflow-x: auto;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--primary-soft);
+    }
+
+    .card-header h3 {
+      color: #15803d;
+    }
+
+    /* Exam Selector Bar */
+    .exam-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--card-bg);
+      padding: 16px 20px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .exam-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .exam-tab-btn {
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--primary-tint);
+      color: #15803d;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .exam-tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary-dark);
+    }
+
+    /* Full Marks Configuration Bar inside Subject Card */
+    .full-marks-config {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      background: var(--primary-tint);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+    }
+
+    .config-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #15803d;
+    }
+
+    .config-field input {
+      width: 80px;
+      padding: 6px 10px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Direct Messaging Thread Cards */
+    .message-thread {
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 14px;
+      background: #ffffff;
+    }
+
+    .message-thread.resolved {
+      border-left-color: #86efac;
+      background: #fafffb;
+    }
+
+    .msg-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+
+    .msg-topic-tag {
+      background: var(--primary-soft);
+      color: #15803d;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.78rem;
+    }
+
+    .msg-body {
+      font-size: 0.94rem;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .msg-reply-box {
+      background: var(--primary-tint);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 0.88rem;
+      color: #14532d;
+    }
+
+    .admin-reply-form {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .admin-reply-form input {
+      flex: 1;
+      min-width: 220px;
+    }
+
+    /* Forms & Inputs */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    select,
+    textarea {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      width: 100%;
+      background-color: #ffffff;
+      color: var(--text-main);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 75px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+    }
+
+    input:disabled,
+    textarea:disabled,
+    select:disabled {
+      background-color: var(--primary-tint);
+      color: var(--text-muted);
+      cursor: not-allowed;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      color: #15803d;
+      border: 1px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary-tint);
+    }
+
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.8rem;
+    }
+
+    .btn-success {
+      background: var(--primary-dark);
+      color: #ffffff;
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th,
+    td {
+      text-align: left;
+      padding: 11px 12px;
+      border-bottom: 1px solid var(--primary-soft);
+      font-size: 0.88rem;
+    }
+
+    th {
+      background-color: var(--primary-tint);
+      color: #15803d;
+      font-weight: 600;
+    }
+
+    tr:hover td {
+      background-color: #fafffb;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .status-present,
+    .status-approved {
+      background: var(--primary-soft);
+      color: #15803d;
+    }
+
+    .status-absent,
+    .status-rejected {
+      background: #fee2e2;
+      color: var(--danger);
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: var(--warning);
+    }
+
+    .status-locked {
+      background: var(--primary-tint);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+
+    .mark-fail {
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .sub-score-note {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .perm-checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      accent-color: var(--primary);
+    }
+
+    .alert-box {
+      padding: 12px 16px;
+      border-radius: 6px;
+      background: var(--primary-tint);
+      color: #15803d;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+    }
+
+    .error-banner {
+      padding: 12px 16px;
+      border-radius: 6px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 0.86rem;
+      margin-top: 12px;
+      border: 1px solid #fecaca;
+      display: none;
+    }
+
+    .remove-card {
+      border-left: 4px solid var(--danger);
+    }
+
+    .request-card {
+      border-left: 4px solid var(--primary);
+    }
+
+    .search-box {
+      max-width: 220px;
+    }
+
+    .toolbar-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* ============================================================
+       PROFESSIONAL PRINT SHEET DESIGN (LIGHT GREEN & WHITE)
+       ============================================================ */
+    .print-letterhead,
+    .print-signatures {
+      display: none;
+    }
+
+    @media print {
+      @page {
+        margin: 0;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        padding: 7mm 11mm 10mm 11mm;
+        margin: 0;
+        display: block;
+      }
+
+      .sidebar,
+      .header,
+      .exam-bar,
+      #admin-add-student-card,
+      #teacher-request-student-card,
+      #pending-requests-card,
+      .no-print {
+        display: none !important;
+      }
+
+      .main-content {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+      }
+
+      .printable-sheet-card {
+        border: 2.5px solid #22c55e !important;
+        outline: 1px solid #86efac;
+        outline-offset: -6px;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+        padding: 16px 20px 20px 20px !important;
+        margin: 0 !important;
+        background: #ffffff !important;
+      }
+
+      .print-letterhead {
+        display: block;
+        text-align: center;
+        background: linear-gradient(180deg, #e7f9ee 0%, #f5fdf8 100%) !important;
+        border: 1.5px solid #86efac;
+        border-top: 5px solid #22c55e;
+        border-radius: 8px;
+        padding: 10px 16px 12px 16px;
+        margin-top: 0;
+        margin-bottom: 14px;
+      }
+
+      .print-logo {
+        width: 72px;
+        height: 72px;
+        object-fit: cover;
+        border-radius: 50%;
+        background: #ffffff;
+        padding: 3px;
+        border: 2.5px solid #22c55e;
+        margin-top: -2px;
+        margin-bottom: 4px;
+      }
+
+      .print-letterhead h2 {
+        font-size: 1.55rem;
+        font-weight: 800;
+        color: #14532d;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        margin-bottom: 2px;
+      }
+
+      .print-letterhead .print-address {
+        font-size: 0.92rem;
+        font-weight: 600;
+        color: #166534;
+        margin-bottom: 6px;
+      }
+
+      .print-doc-badge {
+        display: inline-block;
+        background: #ffffff !important;
+        color: #15803d;
+        border: 1.5px solid #22c55e;
+        padding: 4px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 8px;
+      }
+
+      th {
+        background-color: #dcfce7 !important;
+        color: #14532d !important;
+        font-weight: 700;
+        border: 1px solid #86efac !important;
+        padding: 8px 9px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+      }
+
+      td {
+        border: 1px solid #bbf7d0 !important;
+        padding: 7px 9px;
+        font-size: 0.85rem;
+        color: #14532d;
+      }
+
+      tbody tr:nth-child(even) td {
+        background-color: #f6fdf9 !important;
+      }
+
+      tbody tr:nth-child(odd) td {
+        background-color: #ffffff !important;
+      }
+
+      .print-signatures {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-top: 36px;
+        padding-top: 10px;
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+
+      .sig-box {
+        text-align: center;
+        width: 170px;
+      }
+
+      .sig-line {
+        border-top: 1.5px solid #22c55e;
+        margin-bottom: 5px;
+      }
+
+      .sig-title {
+        font-size: 0.82rem;
+        font-weight: 700;
+        color: #15803d;
+      }
+
+      .sig-sub {
+        font-size: 0.72rem;
+        color: #4d7c5f;
+      }
+    }
+
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--sidebar-border);
+      }
+
+      .search-box {
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="logo.png.jpg" alt="Unique Nepal Academy Logo" class="school-logo"
+        onerror="this.style.display='none'; document.getElementById('sidebar-logo-fallback').style.display='flex';" />
+      <div id="sidebar-logo-fallback" class="logo-fallback">UNA</div>
+      <div class="brand-title">Unique Nepal Academy</div>
+      <div class="brand-address">Lokanthali, Bhaktapur</div>
+    </div>
+    <ul class="nav-links">
+      <li id="nav-dashboard" class="active" onclick="showSection('dashboard', this)">Dashboard</li>
+      <li id="nav-marksheet" onclick="showSection('marksheet', this)">Student Mark Sheet</li>
+      <li id="nav-subjects" onclick="showSection('subjects', this)">Enter Subject Marks</li>
+      <li id="nav-students" onclick="showSection('students', this)">
+        <span>Students & Requests</span>
+        <span class="nav-badge" id="nav-req-badge">1</span>
+      </li>
+      <li id="nav-directory" onclick="showSection('directory', this)">Teachers & Permissions</li>
+      <li id="nav-messages" onclick="showSection('messages', this)">
+        <span>Help & Messages</span>
+        <span class="nav-badge" id="nav-msg-badge">1</span>
+      </li>
+      <li id="nav-attendance" onclick="showSection('attendance', this)">Daily Attendance</li>
+      <li id="nav-leaves" onclick="showSection('leaves', this)">Leave Requests</li>
+      <li id="nav-timetable" onclick="showSection('timetable', this)">Class Timetable</li>
+      <li id="nav-notices" onclick="showSection('notices', this)">Staff Notice Board</li>
+    </ul>
+  </aside>
+
+  <!-- Main Workspace -->
+  <main class="main-content">
+    <div class="header">
+      <div class="header-left">
+        <img src="logo.png.jpg" alt="Logo" class="header-mini-logo" onerror="this.style.display='none';" />
+        <div>
+          <h1 id="page-title">Dashboard Overview</h1>
+          <p>Unique Nepal Academy • Lokanthali, Bhaktapur</p>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- SUPABASE CLOUD SYNC STATUS -->
+        <div class="db-status-pill syncing" id="db-status-pill" title="Supabase Cloud Database Status">
+          <span class="db-dot"></span>
+          <span id="db-status-text">Connecting Supabase...</span>
+        </div>
+        <button type="button" class="btn-outline btn-sm" onclick="loadFromSupabase(true)"
+          title="Refresh data from Supabase">
+          Sync Now
+        </button>
+
+        <!-- NOTIFICATION BELL ICON WITH DROPDOWN -->
+        <div class="notif-wrapper" id="notif-wrapper">
+          <button type="button" class="notif-bell-btn" onclick="toggleNotificationPanel(event)"
+            title="View Notifications" aria-label="Notifications">
+            <svg viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="notif-count-badge" id="notif-bell-badge">2</span>
+          </button>
+
+          <div class="notif-dropdown" id="notif-dropdown">
+            <div class="notif-dropdown-header">
+              <strong>Notifications (<span id="notif-header-count">2</span>)</strong>
+              <button type="button" class="notif-mark-read-btn" onclick="markAllNotificationsRead()">Mark all as
+                read</button>
+            </div>
+            <div class="notif-list" id="notif-list-container">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+
+        <!-- USER / ROLE SWITCHER -->
+        <div class="role-switcher">
+          <label for="current-user-select">Logged in as:</label>
+          <select id="current-user-select" onchange="switchUser()">
+            <!-- Populated dynamically -->
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. DASHBOARD SECTION -->
+    <section id="dashboard" class="section active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p>Total Staff & Teachers</p>
+          <h2 id="stat-total">3</h2>
+        </div>
+        <div class="stat-card">
+          <p>Total Enrolled Students</p>
+          <h2 id="stat-students">4</h2>
+        </div>
+        <div class="stat-card">
+          <p>Open Help Queries</p>
+          <h2 id="stat-open-queries" style="color: var(--warning);">1</h2>
+        </div>
+        <div class="stat-card">
+          <p>Active User Role</p>
+          <h2 id="stat-role" style="font-size: 1.2rem;">Admin</h2>
+        </div>
+      </div>
+
+      <!-- SUPABASE CONNECTION SETTINGS & TROUBLESHOOTER -->
+      <div class="card">
+        <div class="card-header">
+          <h3>Supabase Cloud Connection Settings</h3>
+          <div class="toolbar-actions">
+            <button type="button" class="btn-outline btn-sm" onclick="resetDefaultCredentials()">Reset Default
+              Key</button>
+            <button type="button" class="btn-outline btn-sm" onclick="exportJsonBackup()">Download JSON Backup</button>
+          </div>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.86rem; line-height: 1.6; margin-bottom: 14px;">
+          Pre-configured with your Unique Nepal Academy Supabase Project URL and Publishable Key
+          (<code>sb_publishable_...</code>). Every change automatically syncs to <code>school_portal_state</code>.
+        </p>
+        <div class="form-grid" style="grid-template-columns: 1fr 2fr auto;">
+          <input type="text" id="cfg-supabase-url" placeholder="https://xwjeszrungafwyaxnjmc.supabase.co" />
+          <input type="text" id="cfg-supabase-key" placeholder="sb_publishable_d-jABC1pAQuvfM7s3ZJu9A_1XYBa6QW" />
+          <button type="button" class="btn-primary" onclick="saveSupabaseCredentials()">Save & Connect</button>
+        </div>
+        <div id="supabase-debug-box" class="error-banner"></div>
+      </div>
+    </section>
+
+    <!-- 2. CONSOLIDATED STUDENT MARK SHEET (SINGLE SHEET BY STUDENT NAME) -->
+    <section id="marksheet" class="section">
+      <div class="exam-bar no-print">
+        <div>
+          <strong style="color: #15803d; font-size: 0.95rem;">Examination Ledger Term:</strong>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Theory + Practical combined per student • Failing
+            any 1 subject = <strong>Not Graded (NG)</strong></div>
+        </div>
+        <div class="exam-tabs">
+          <button type="button" class="exam-tab-btn active" data-exam="First Examination"
+            onclick="selectExam('First Examination')">First Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Second Examination"
+            onclick="selectExam('Second Examination')">Second Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Mid Term Examination"
+            onclick="selectExam('Mid Term Examination')">Mid Term Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Final Examination"
+            onclick="selectExam('Final Examination')">Final Examination</button>
+        </div>
+      </div>
+
+      <div class="card printable-sheet-card">
+        <div class="print-letterhead" id="marksheet-print-header">
+          <img src="logo.png.jpg" alt="Unique Nepal Academy Logo" class="print-logo"
+            onerror="this.style.display='none';" />
+          <h2>Unique Nepal Academy</h2>
+          <div class="print-address">Lokanthali, Bhaktapur</div>
+          <div class="print-doc-badge" id="print-marksheet-subtitle">OFFICIAL RESULT LEDGER</div>
+        </div>
+
+        <div class="card-header no-print">
+          <div>
+            <h3 id="marksheet-card-title">Consolidated Student Mark Sheet — First Examination</h3>
+            <span style="font-size: 0.82rem; color: var(--text-muted);">Shows Theory + Practical marks, Grand Total,
+              Percentage, Grade (NG if any subject failed), and Rank</span>
+          </div>
+          <div class="toolbar-actions">
+            <select id="marksheet-class-filter" style="width: auto;" onchange="renderConsolidatedMarkSheet()">
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+            </select>
+            <input type="text" id="marksheet-search" class="search-box" placeholder="Search student name..."
+              oninput="renderConsolidatedMarkSheet()" />
+            <button type="button" class="btn-primary" onclick="exportConsolidatedMarkSheetToExcel()">Export Mark Sheet
+              (Excel)</button>
+            <button type="button" class="btn-outline" onclick="printConsolidatedMarkSheet()">Print Mark Sheet</button>
+          </div>
+        </div>
+
+        <div id="consolidated-marksheet-container"></div>
+
+        <div class="print-signatures">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Class Teacher</div>
+            <div class="sig-sub">Checked & Verified</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Exam Coordinator</div>
+            <div class="sig-sub">Examination Department</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Principal</div>
+            <div class="sig-sub">Unique Nepal Academy</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. SUBJECT MARKS ENTRY -->
+    <section id="subjects" class="section">
+      <div class="exam-bar">
+        <div>
+          <strong style="color: #15803d; font-size: 0.95rem;">Select Examination Term for Marks Entry:</strong>
+          <div style="font-size: 0.8rem; color: var(--text-muted);">Set Theory & Practical full marks (e.g., 75+25,
+            50+0, 25+25) and enter student scores</div>
+        </div>
+        <div class="exam-tabs">
+          <button type="button" class="exam-tab-btn active" data-exam="First Examination"
+            onclick="selectExam('First Examination')">First Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Second Examination"
+            onclick="selectExam('Second Examination')">Second Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Mid Term Examination"
+            onclick="selectExam('Mid Term Examination')">Mid Term Examination</button>
+          <button type="button" class="exam-tab-btn" data-exam="Final Examination"
+            onclick="selectExam('Final Examination')">Final Examination</button>
+        </div>
+      </div>
+
+      <div id="subject-permission-banner" class="alert-box" style="display: none;"></div>
+      <div id="subject-workspace"></div>
+    </section>
+
+    <!-- 4. STUDENTS & REQUESTS SECTION -->
+    <section id="students" class="section">
+      <div class="card" id="admin-add-student-card">
+        <div class="card-header">
+          <h3>Add Student Directly (Admin)</h3>
+        </div>
+        <form id="admin-student-form" class="form-grid" onsubmit="adminAddStudent(event)">
+          <input type="text" id="stu-name" placeholder="Student Full Name" required />
+          <select id="stu-class" required>
+            <option value="">Select Class</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+          </select>
+          <input type="number" id="stu-roll" placeholder="Roll No." min="1" required />
+          <input type="text" id="stu-phone" placeholder="Parent / Guardian Phone" required />
+          <button type="submit" class="btn-primary">+ Add Student</button>
+        </form>
+      </div>
+
+      <div class="card request-card" id="teacher-request-student-card" style="display: none;">
+        <div class="card-header">
+          <h3>Request Admin to Add New Student (<span id="teacher-assigned-class-label"></span>)</h3>
+          <span class="status status-pending">Teacher Portal / Phone Request</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
+          Submit a new student's details for your assigned class. Once the Admin approves, the student will appear in
+          your class roster and marks sheet.
+        </p>
+        <form id="teacher-student-request-form" class="form-grid" onsubmit="submitStudentRequest(event)">
+          <input type="text" id="req-stu-name" placeholder="Student Full Name" required />
+          <input type="number" id="req-stu-roll" placeholder="Proposed Roll No." min="1" required />
+          <input type="text" id="req-stu-phone" placeholder="Parent / Guardian Phone" required />
+          <button type="submit" class="btn-primary">Send Request to Admin</button>
+        </form>
+      </div>
+
+      <div class="card request-card" id="pending-requests-card">
+        <div class="card-header">
+          <h3 id="requests-table-title">Teacher Requests to Add Students (Approval Queue)</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Req ID</th>
+              <th>Requested By</th>
+              <th>Class</th>
+              <th>Student Name</th>
+              <th>Roll No.</th>
+              <th>Parent Phone</th>
+              <th>Status</th>
+              <th id="req-action-header">Admin Action</th>
+            </tr>
+          </thead>
+          <tbody id="student-requests-body"></tbody>
+        </table>
+      </div>
+
+      <div class="card printable-sheet-card">
+        <div class="print-letterhead" id="directory-print-header">
+          <img src="logo.png.jpg" alt="Unique Nepal Academy Logo" class="print-logo"
+            onerror="this.style.display='none';" />
+          <h2>Unique Nepal Academy</h2>
+          <div class="print-address">Lokanthali, Bhaktapur</div>
+          <div class="print-doc-badge" id="print-sheet-subtitle">STUDENT DIRECTORY RECORD</div>
+        </div>
+
+        <div class="card-header no-print">
+          <h3 id="enrolled-students-title">Enrolled Students Directory</h3>
+          <div class="toolbar-actions">
+            <select id="student-class-filter" style="width: auto;" onchange="renderStudentSection()">
+              <option value="ALL">All Classes</option>
+              <option value="Grade 7">Grade 7</option>
+              <option value="Grade 8">Grade 8</option>
+              <option value="Grade 9">Grade 9</option>
+            </select>
+            <input type="text" id="student-search" class="search-box" placeholder="Search student..."
+              oninput="renderStudentSection()" />
+            <button type="button" class="btn-primary" onclick="exportStudentsToExcel()">Export to Excel</button>
+            <button type="button" class="btn-outline" onclick="printStudentSheet()">Print Sheet</button>
+          </div>
+        </div>
+        <table id="enrolled-students-table">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Roll</th>
+              <th>Student Name</th>
+              <th>Class</th>
+              <th>Parent Phone</th>
+              <th>Added / Approved By</th>
+              <th id="stu-delete-header" class="no-print">Action</th>
+            </tr>
+          </thead>
+          <tbody id="enrolled-students-body"></tbody>
+        </table>
+
+        <div class="print-signatures">
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Class Teacher</div>
+            <div class="sig-sub">Prepared By</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Admin Office</div>
+            <div class="sig-sub">Record Verified</div>
+          </div>
+          <div class="sig-box">
+            <div class="sig-line"></div>
+            <div class="sig-title">Principal</div>
+            <div class="sig-sub">Unique Nepal Academy</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. STAFF DIRECTORY & PERMISSIONS SECTION -->
+    <section id="directory" class="section">
+      <div id="admin-only-notice" class="alert-box" style="display: none;">
+        Only the <strong>Admin / Principal</strong> can add, remove, or modify staff permissions. Switch to Admin at the
+        top right to manage staff.
+      </div>
+
+      <div class="card" id="add-staff-card">
+        <div class="card-header">
+          <h3>Add New Teacher / Staff</h3>
+        </div>
+        <form id="staff-form" class="form-grid" onsubmit="addStaff(event)">
+          <input type="text" id="staff-name" placeholder="Full Name" required />
+          <select id="staff-role" required>
+            <option value="">Select Role</option>
+            <option value="Teacher">Teacher</option>
+            <option value="Class Teacher">Class Teacher</option>
+            <option value="Department Head">Department Head</option>
+            <option value="Accountant">Accountant</option>
+            <option value="Admin Staff">Admin Staff</option>
+          </select>
+          <select id="staff-class" required>
+            <option value="">Assigned Class</option>
+            <option value="Grade 7">Grade 7</option>
+            <option value="Grade 8">Grade 8</option>
+            <option value="Grade 9">Grade 9</option>
+            <option value="All Classes">All Classes (Admin/Staff)</option>
+          </select>
+          <input type="text" id="staff-subject" placeholder="Subject / Department" required />
+          <input type="text" id="staff-phone" placeholder="Phone Number" required />
+          <button type="submit" class="btn-primary">+ Add Staff</button>
+        </form>
+      </div>
+
+      <div class="card remove-card" id="remove-staff-card">
+        <div class="card-header">
+          <h3>Remove Staff by Specific Criteria</h3>
+        </div>
+        <form id="remove-staff-form" class="form-grid" onsubmit="removeStaffByCriteria(event)">
+          <select id="remove-by-field" required>
+            <option value="id">Remove by Staff ID (e.g., STF-02)</option>
+            <option value="name">Remove by Full Name (e.g., Binod Karki)</option>
+            <option value="assignedClass">Remove by Assigned Class (e.g., Grade 8)</option>
+            <option value="subject">Remove by Subject / Dept (e.g., Science)</option>
+            <option value="role">Remove by Role (e.g., Accountant)</option>
+            <option value="phone">Remove by Phone Number</option>
+          </select>
+          <input type="text" id="remove-by-value" placeholder="Enter exact ID, Name, Class, Subject..." required />
+          <button type="submit" class="btn-danger">Remove Matching Staff</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3>Staff Directory & Subject Access Permissions</h3>
+          <input type="text" id="directory-search" class="search-box"
+            placeholder="Filter by ID, Name, Class, Subject..." oninput="renderTables()" />
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Role</th>
+              <th>Assigned Class</th>
+              <th>Subject / Dept</th>
+              <th>Phone</th>
+              <th>Can View</th>
+              <th>Can Edit</th>
+              <th id="action-col-header">Action</th>
+            </tr>
+          </thead>
+          <tbody id="staff-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 6. DIRECT HELP & DOUBT MESSAGING SECTION -->
+    <section id="messages" class="section">
+      <div class="card" id="teacher-ask-card" style="display: none;">
+        <div class="card-header">
+          <h3>Ask Admin / Department Head for Help</h3>
+          <span class="status status-approved">Direct Staff Support</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 14px;">
+          Have any confusion about full marks, practical scores, student enrollment, or permissions? Send a direct
+          message to the Admin or your Head below.
+        </p>
+        <form id="doubt-message-form" onsubmit="sendHelpMessage(event)">
+          <div class="form-grid" style="margin-bottom: 12px;">
+            <select id="msg-recipient" required>
+              <option value="Admin / Principal">Send To: Admin / Principal</option>
+              <option value="Academic / Department Head">Send To: Academic / Department Head</option>
+              <option value="Exam Coordinator">Send To: Exam Coordinator</option>
+            </select>
+            <select id="msg-topic" required>
+              <option value="">Select Confusion / Topic</option>
+              <option value="Subject Marks & Practical">Subject Marks & Practical</option>
+              <option value="Student List & Roll No.">Student List & Roll No.</option>
+              <option value="Edit / View Permissions">Edit / View Permissions</option>
+              <option value="Exam Schedule & Routine">Exam Schedule & Routine</option>
+              <option value="General / Other">General / Other</option>
+            </select>
+          </div>
+          <div style="margin-bottom: 12px;">
+            <textarea id="msg-content" placeholder="Write your question or explain your confusion clearly..."
+              required></textarea>
+          </div>
+          <button type="submit" class="btn-primary">Send Message</button>
+        </form>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h3 id="messages-list-title">Teacher Questions & Doubt Inbox (Admin View)</h3>
+          <select id="msg-status-filter" style="width: auto;" onchange="renderHelpMessages()">
+            <option value="ALL">All Messages</option>
+            <option value="Open">Open / Unanswered</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+        <div id="help-messages-container"></div>
+      </div>
+    </section>
+
+    <!-- 7. ATTENDANCE SECTION -->
+    <section id="attendance" class="section">
+      <div class="card">
+        <div class="card-header">
+          <h3>Staff Daily Attendance Log</h3>
+          <span id="today-date" style="color: var(--text-muted); font-size: 0.9rem;"></span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Staff ID</th>
+              <th>Staff Name</th>
+              <th>Assigned Class</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="attendance-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 8. LEAVE MANAGEMENT SECTION -->
+    <section id="leaves" class="section">
+      <div class="card">
+        <div class="card-header">
+          <h3>Leave Applications</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Staff Name</th>
+              <th>Leave Type</th>
+              <th>Dates</th>
+              <th>Reason</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sita Sharma</td>
+              <td>Sick Leave</td>
+              <td>Today (1 Day)</td>
+              <td>Fever and doctor visit</td>
+              <td><span class="status status-pending" id="leave-status-1">Pending</span></td>
+              <td>
+                <button class="btn-sm btn-success" onclick="updateLeave(1, 'Approved')">Approve</button>
+                <button class="btn-sm btn-danger" onclick="updateLeave(1, 'Rejected')">Reject</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 9. TIMETABLE SECTION -->
+    <section id="timetable" class="section">
+      <div class="card">
+        <div class="card-header">
+          <h3>Teacher Weekly Routine</h3>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>Time</th>
+              <th>Grade 7</th>
+              <th>Grade 8</th>
+              <th>Grade 9</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Period 1</td>
+              <td>10:00 - 10:45</td>
+              <td>English (Binod K.)</td>
+              <td>Science (Anil T.)</td>
+              <td>Math (Sita S.)</td>
+            </tr>
+            <tr>
+              <td>Period 2</td>
+              <td>10:45 - 11:30</td>
+              <td>Math (Sita S.)</td>
+              <td>English (Binod K.)</td>
+              <td>Computer (Ramesh A.)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 10. NOTICE BOARD SECTION -->
+    <section id="notices" class="section">
+      <div class="card">
+        <div class="card-header">
+          <h3>Post Staff Notice</h3>
+        </div>
+        <div class="form-grid">
+          <input type="text" id="notice-input" placeholder="Write an announcement for teachers & staff..." />
+          <button class="btn-primary" onclick="postNotice()">Publish Notice</button>
+        </div>
+        <div id="notice-list" style="margin-top: 16px;">
+          <div
+            style="padding: 12px; border-left: 4px solid var(--primary); background: var(--primary-tint); margin-bottom: 10px;">
+            <strong>Staff Meeting Reminder:</strong> First Examination and Mid Term marks entry deadline is Friday at
+            4:00 PM.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // ============================================================
+    // SUPABASE CONFIGURATION WITH PUBLISHABLE KEY
+    // ============================================================
+    const DEFAULT_SUPABASE_URL = 'https://xwjeszrungafwyaxnjmc.supabase.co';
+    const DEFAULT_SUPABASE_KEY = 'sb_publishable_d-jABC1pAQuvfM7s3ZJu9A_1XYBa6QW';
+    const CREDENTIALS_STORAGE_KEY = 'una_supabase_creds_v2';
+    const PORTAL_DOC_ID = 'unique_nepal_academy_main';
+    const LOCAL_BACKUP_KEY = 'una_portal_backup_v1';
+
+    function getActiveCredentials() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(CREDENTIALS_STORAGE_KEY) || '{}');
+        const cleanUrl = (saved.url || DEFAULT_SUPABASE_URL).trim().replace(/\/rest\/v1\/?$/, '').replace(/\/$/, '');
+        const cleanKey = (saved.key || DEFAULT_SUPABASE_KEY).trim();
+        return { url: cleanUrl, key: cleanKey };
+      } catch (e) {
+        return { url: DEFAULT_SUPABASE_URL, key: DEFAULT_SUPABASE_KEY };
+      }
+    }
+
+    function buildSupabaseHeaders(apiKey) {
+      const headers = {
+        'apikey': apiKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'resolution=merge-duplicates,return=representation'
+      };
+      // Only include Authorization header if using a legacy JWT key (eyJ...)
+      if (apiKey.startsWith('eyJ')) {
+        headers['Authorization'] = `Bearer ${apiKey}`;
+      }
+      return headers;
+    }
+
+    function saveSupabaseCredentials() {
+      const urlVal = document.getElementById('cfg-supabase-url').value.trim();
+      const keyVal = document.getElementById('cfg-supabase-key').value.trim();
+      if (!urlVal || !keyVal) {
+        alert('Please enter both the Supabase Project URL and Publishable Key.');
+        return;
+      }
+      localStorage.setItem(CREDENTIALS_STORAGE_KEY, JSON.stringify({ url: urlVal, key: keyVal }));
+      loadFromSupabase(true);
+    }
+
+    function resetDefaultCredentials() {
+      localStorage.removeItem(CREDENTIALS_STORAGE_KEY);
+      loadFromSupabase(true);
+    }
+
+    function setDbStatus(state, text, debugDetail = '') {
+      const pill = document.getElementById('db-status-pill');
+      const label = document.getElementById('db-status-text');
+      const debugBox = document.getElementById('supabase-debug-box');
+      if (pill && label) {
+        pill.className = 'db-status-pill' + (state ? ' ' + state : '');
+        label.innerText = text;
+      }
+      if (debugBox) {
+        if (debugDetail) {
+          debugBox.style.display = 'block';
+          debugBox.innerHTML = `<strong>Supabase Diagnostic:</strong> ${debugDetail}`;
+        } else {
+          debugBox.style.display = 'none';
+        }
+      }
+    }
+
+    // 4 Annual Examinations List
+    const EXAM_TERMS = [
+      'First Examination',
+      'Second Examination',
+      'Mid Term Examination',
+      'Final Examination'
+    ];
+    let selectedExamTerm = 'First Examination';
+
+    // Subject Full Marks Configuration
+    let subjectConfigs = {
+      'Grade 7::Mathematics': { thFull: 75, prFull: 25 },
+      'Grade 7::English': { thFull: 75, prFull: 25 },
+      'Grade 7::Science': { thFull: 50, prFull: 25 },
+      'Grade 8::Science': { thFull: 75, prFull: 25 }
+    };
+
+    function getSubjectConfig(className, subject) {
+      const key = `${className}::${subject}`;
+      if (!subjectConfigs[key]) {
+        subjectConfigs[key] = { thFull: 75, prFull: 25 };
+      }
+      return subjectConfigs[key];
+    }
+
+    // 1. Staff & Permission Data
+    let staffList = [
+      {
+        id: 'STF-01',
+        name: 'Sita Sharma',
+        role: 'Class Teacher',
+        assignedClass: 'Grade 7',
+        subject: 'Mathematics',
+        phone: '9841000001',
+        status: 'Present',
+        canView: true,
+        canEdit: true
+      },
+      {
+        id: 'STF-02',
+        name: 'Binod Karki',
+        role: 'Teacher',
+        assignedClass: 'Grade 7',
+        subject: 'English',
+        phone: '9841000002',
+        status: 'Present',
+        canView: true,
+        canEdit: true
+      },
+      {
+        id: 'STF-03',
+        name: 'Anil Thapa',
+        role: 'Teacher',
+        assignedClass: 'Grade 7',
+        subject: 'Science',
+        phone: '9841000003',
+        status: 'Present',
+        canView: true,
+        canEdit: true
+      }
+    ];
+
+    // 2. Enrolled Students Data
+    let studentList = [
+      {
+        id: 'STU-101',
+        roll: 1,
+        name: 'Aditi Sharma',
+        studentClass: 'Grade 7',
+        phone: '9851001101',
+        addedBy: 'Admin',
+        marks: {
+          Mathematics: {
+            'First Examination': { th: 64, pr: 23 },
+            'Second Examination': { th: 66, pr: 24 },
+            'Mid Term Examination': { th: 65, pr: 23 },
+            'Final Examination': { th: 68, pr: 24 }
+          },
+          English: {
+            'First Examination': { th: 60, pr: 22 },
+            'Second Examination': { th: 62, pr: 23 },
+            'Mid Term Examination': { th: 64, pr: 23 },
+            'Final Examination': { th: 65, pr: 24 }
+          },
+          Science: {
+            'First Examination': { th: 42, pr: 22 },
+            'Second Examination': { th: 44, pr: 23 },
+            'Mid Term Examination': { th: 45, pr: 23 },
+            'Final Examination': { th: 47, pr: 24 }
+          }
+        }
+      },
+      {
+        id: 'STU-102',
+        roll: 2,
+        name: 'Ahehas Karki',
+        studentClass: 'Grade 7',
+        phone: '9851001102',
+        addedBy: 'Admin',
+        marks: {
+          Mathematics: {
+            'First Examination': { th: 42, pr: 20 },
+            'Second Examination': { th: 48, pr: 21 },
+            'Mid Term Examination': { th: 52, pr: 22 },
+            'Final Examination': { th: 55, pr: 23 }
+          },
+          English: {
+            'First Examination': { th: 50, pr: 20 },
+            'Second Examination': { th: 52, pr: 21 },
+            'Mid Term Examination': { th: 55, pr: 22 },
+            'Final Examination': { th: 58, pr: 23 }
+          },
+          Science: {
+            'First Examination': { th: 40, pr: 21 },
+            'Second Examination': { th: 42, pr: 22 },
+            'Mid Term Examination': { th: 44, pr: 22 },
+            'Final Examination': { th: 46, pr: 23 }
+          }
+        }
+      },
+      {
+        id: 'STU-103',
+        roll: 3,
+        name: 'Nidi Thapa',
+        studentClass: 'Grade 7',
+        phone: '9851001103',
+        addedBy: 'Sita Sharma (Approved)',
+        marks: {
+          Mathematics: {
+            'First Examination': { th: 24, pr: 22 },
+            'Second Examination': { th: 55, pr: 23 },
+            'Mid Term Examination': { th: 58, pr: 23 },
+            'Final Examination': { th: 62, pr: 24 }
+          },
+          English: {
+            'First Examination': { th: 64, pr: 23 },
+            'Second Examination': { th: 65, pr: 23 },
+            'Mid Term Examination': { th: 66, pr: 24 },
+            'Final Examination': { th: 68, pr: 24 }
+          },
+          Science: {
+            'First Examination': { th: 43, pr: 22 },
+            'Second Examination': { th: 45, pr: 23 },
+            'Mid Term Examination': { th: 46, pr: 23 },
+            'Final Examination': { th: 48, pr: 24 }
+          }
+        }
+      },
+      {
+        id: 'STU-104',
+        roll: 1,
+        name: 'Rohan Maharjan',
+        studentClass: 'Grade 8',
+        phone: '9851001104',
+        addedBy: 'Admin',
+        marks: {
+          Science: {
+            'First Examination': { th: 55, pr: 22 },
+            'Second Examination': { th: 58, pr: 23 },
+            'Mid Term Examination': { th: 60, pr: 23 },
+            'Final Examination': { th: 63, pr: 24 }
+          }
+        }
+      }
+    ];
+
+    // 3. Teacher Requests to Add Students
+    let studentRequests = [
+      {
+        reqId: 'REQ-01',
+        teacherId: 'STF-01',
+        teacherName: 'Sita Sharma',
+        studentClass: 'Grade 7',
+        studentName: 'Krishal Prajapati',
+        roll: 4,
+        phone: '9841223344',
+        status: 'Pending'
+      }
+    ];
+
+    // 4. Direct Help & Doubt Messages
+    let helpMessages = [
+      {
+        msgId: 'MSG-01',
+        senderId: 'STF-03',
+        senderName: 'Anil Thapa',
+        senderClass: 'Grade 7',
+        senderSubject: 'Science',
+        recipient: 'Admin / Principal',
+        topic: 'Subject Marks & Practical',
+        question: 'For Grade 7 Science First Examination, should I set Theory to 50 and Practical to 25 (total 75)?',
+        reply: '',
+        status: 'Open',
+        timestamp: 'Today, 10:15 AM'
+      }
+    ];
+
+    // 5. Notification Feed Items
+    let notifications = [
+      {
+        id: 'NOTIF-1',
+        targetUser: 'ADMIN',
+        title: 'New Q&A from Anil Thapa (Science)',
+        desc: 'For Grade 7 Science First Examination, should I set Theory to 50 and Practical to 25?',
+        targetSection: 'messages',
+        time: 'Today, 10:15 AM',
+        unread: true
+      },
+      {
+        id: 'NOTIF-2',
+        targetUser: 'ADMIN',
+        title: 'Student Add Request — Sita Sharma',
+        desc: 'Requested to add Krishal Prajapati (Roll 4) to Grade 7.',
+        targetSection: 'students',
+        time: 'Today, 09:40 AM',
+        unread: true
+      }
+    ];
+
+    let staffCounter = 3;
+    let studentCounter = 104;
+    let requestCounter = 1;
+    let messageCounter = 1;
+    let notifCounter = 2;
+    let currentUserId = 'ADMIN';
+    document.getElementById('today-date').innerText = new Date().toDateString();
+
+    // ============================================================
+    // DIRECT REST SUPABASE SAVE & LOAD ENGINE
+    // ============================================================
+
+    function buildStateSnapshot() {
+      return {
+        staffList,
+        studentList,
+        subjectConfigs,
+        studentRequests,
+        helpMessages,
+        notifications,
+        staffCounter,
+        studentCounter,
+        requestCounter,
+        messageCounter,
+        notifCounter
+      };
+    }
+
+    function applyStateSnapshot(snap) {
+      if (!snap || typeof snap !== 'object') return;
+      if (Array.isArray(snap.staffList)) staffList = snap.staffList;
+      if (Array.isArray(snap.studentList)) studentList = snap.studentList;
+      if (snap.subjectConfigs && typeof snap.subjectConfigs === 'object') subjectConfigs = snap.subjectConfigs;
+      if (Array.isArray(snap.studentRequests)) studentRequests = snap.studentRequests;
+      if (Array.isArray(snap.helpMessages)) helpMessages = snap.helpMessages;
+      if (Array.isArray(snap.notifications)) notifications = snap.notifications;
+      if (typeof snap.staffCounter === 'number') staffCounter = snap.staffCounter;
+      if (typeof snap.studentCounter === 'number') studentCounter = snap.studentCounter;
+      if (typeof snap.requestCounter === 'number') requestCounter = snap.requestCounter;
+      if (typeof snap.messageCounter === 'number') messageCounter = snap.messageCounter;
+      if (typeof snap.notifCounter === 'number') notifCounter = snap.notifCounter;
+    }
+
+    async function persistToSupabase() {
+      const snapshot = buildStateSnapshot();
+      const creds = getActiveCredentials();
+
+      try {
+        localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(snapshot));
+      } catch (e) { }
+
+      setDbStatus('syncing', 'Saving to Supabase...');
+      try {
+        const response = await fetch(`${creds.url}/rest/v1/school_portal_state?on_conflict=id`, {
+          method: 'POST',
+          headers: buildSupabaseHeaders(creds.key),
+          body: JSON.stringify({
+            id: PORTAL_DOC_ID,
+            payload: snapshot,
+            updated_at: new Date().toISOString()
+          })
+        });
+
+        if (!response.ok) {
+          const errText = await response.text();
+          if (response.status === 401) {
+            setDbStatus('error', '401 Invalid API Key', `Supabase rejected the API key (${errText}). Verify your Publishable Key in Supabase Settings → API Keys.`);
+          } else if (response.status === 403 || errText.includes('row-level security') || errText.includes('permission denied')) {
+            setDbStatus('error', 'RLS Policy Blocked', `Database permission blocked (${errText}). Run the GRANT + CREATE POLICY SQL script in your Supabase SQL Editor.`);
+          } else if (response.status === 404 || errText.includes('does not exist')) {
+            setDbStatus('error', 'Table Missing (Run SQL)', 'Table "school_portal_state" does not exist yet. Run the SQL script in Supabase SQL Editor.');
+          } else {
+            setDbStatus('error', `Error ${response.status}`, errText);
+          }
+          return;
+        }
+
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        setDbStatus('', `Supabase Synced (${timeStr})`, '');
+      } catch (err) {
+        setDbStatus('error', 'Offline (Saved Locally)', 'Network request failed. Changes are saved locally in this browser.');
+      }
+    }
+
+    async function loadFromSupabase(showAlert = false) {
+      const creds = getActiveCredentials();
+      document.getElementById('cfg-supabase-url').value = creds.url;
+      document.getElementById('cfg-supabase-key').value = creds.key;
+
+      try {
+        const localRaw = localStorage.getItem(LOCAL_BACKUP_KEY);
+        if (localRaw) {
+          applyStateSnapshot(JSON.parse(localRaw));
+        }
+      } catch (e) { }
+
+      setDbStatus('syncing', 'Connecting Supabase...');
+      try {
+        const response = await fetch(
+          `${creds.url}/rest/v1/school_portal_state?id=eq.${PORTAL_DOC_ID}&select=payload`,
+          {
+            method: 'GET',
+            headers: buildSupabaseHeaders(creds.key)
+          }
+        );
+
+        if (!response.ok) {
+          const errText = await response.text();
+          if (response.status === 401) {
+            setDbStatus('error', '401 Invalid API Key', `Supabase rejected the API key (${errText}). Check your Publishable Key above.`);
+          } else if (response.status === 403 || errText.includes('row-level security') || errText.includes('permission denied')) {
+            setDbStatus('error', 'RLS Policy Blocked', `Row-Level Security or table grant blocked access (${errText}). Run the GRANT + CREATE POLICY SQL script in Supabase SQL Editor.`);
+          } else if (response.status === 404 || errText.includes('does not exist')) {
+            setDbStatus('error', 'Table Missing (Run SQL)', 'Table "school_portal_state" was not found. Run the SQL script in Supabase SQL Editor.');
+          } else {
+            setDbStatus('error', `Error ${response.status}`, errText);
+          }
+          if (showAlert) alert(`Supabase Error ${response.status}: ${errText}`);
+        } else {
+          const rows = await response.json();
+          if (Array.isArray(rows) && rows.length > 0 && rows[0].payload) {
+            applyStateSnapshot(rows[0].payload);
+            localStorage.setItem(LOCAL_BACKUP_KEY, JSON.stringify(rows[0].payload));
+            setDbStatus('', 'Supabase Connected', '');
+            if (showAlert) alert('Successfully connected and synced from Supabase!');
+          } else {
+            await persistToSupabase();
+            if (showAlert) alert('Connected and initialized school records in Supabase!');
+          }
+        }
+      } catch (err) {
+        setDbStatus('error', 'Network / CORS Blocked', 'Could not reach Supabase server. Check internet connection.');
+        if (showAlert) alert('Network error reaching Supabase.');
+      }
+
+      renderUserSwitcher();
+      renderAll();
+    }
+
+    function exportJsonBackup() {
+      const blob = new Blob([JSON.stringify(buildStateSnapshot(), null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Unique_Nepal_Academy_Backup_${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // --- NOTIFICATION BELL FUNCTIONS ---
+
+    function addNotification(targetUser, title, desc, targetSection) {
+      notifCounter++;
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      notifications.unshift({
+        id: 'NOTIF-' + notifCounter,
+        targetUser,
+        title,
+        desc,
+        targetSection,
+        time: `Today, ${nowTime}`,
+        unread: true
+      });
+      renderNotifications();
+    }
+
+    function toggleNotificationPanel(e) {
+      if (e) e.stopPropagation();
+      const dropdown = document.getElementById('notif-dropdown');
+      dropdown.classList.toggle('open');
+    }
+
+    document.addEventListener('click', function (e) {
+      const wrapper = document.getElementById('notif-wrapper');
+      const dropdown = document.getElementById('notif-dropdown');
+      if (wrapper && dropdown && !wrapper.contains(e.target)) {
+        dropdown.classList.remove('open');
+      }
+    });
+
+    function openNotificationItem(notifId) {
+      const notif = notifications.find(n => n.id === notifId);
+      if (!notif) return;
+
+      notif.unread = false;
+      document.getElementById('notif-dropdown').classList.remove('open');
+
+      const navItem = document.getElementById(`nav-${notif.targetSection}`);
+      if (navItem) {
+        showSection(notif.targetSection, navItem);
+      }
+      renderNotifications();
+      persistToSupabase();
+    }
+
+    function markAllNotificationsRead() {
+      notifications.forEach(n => {
+        if (n.targetUser === currentUserId) {
+          n.unread = false;
+        }
+      });
+      renderNotifications();
+      persistToSupabase();
+    }
+
+    function renderNotifications() {
+      const myNotifs = notifications.filter(n => n.targetUser === currentUserId);
+      const unreadCount = myNotifs.filter(n => n.unread).length;
+
+      const bellBadge = document.getElementById('notif-bell-badge');
+      const headerCount = document.getElementById('notif-header-count');
+      const listContainer = document.getElementById('notif-list-container');
+
+      headerCount.innerText = unreadCount;
+      if (unreadCount > 0) {
+        bellBadge.style.display = 'flex';
+        bellBadge.innerText = unreadCount;
+      } else {
+        bellBadge.style.display = 'none';
+      }
+
+      if (myNotifs.length === 0) {
+        listContainer.innerHTML = `<div class="notif-empty">No notifications right now.</div>`;
+        return;
+      }
+
+      listContainer.innerHTML = myNotifs.map(n => `
+        <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="openNotificationItem('${n.id}')">
+          <div class="notif-item-title">${n.title}</div>
+          <div class="notif-item-desc">${n.desc}</div>
+          <div class="notif-item-time">${n.time} • Click to open</div>
+        </div>
+      `).join('');
+    }
+
+    // --- USER & NAVIGATION FUNCTIONS ---
+
+    function renderUserSwitcher() {
+      const select = document.getElementById('current-user-select');
+      if (currentUserId !== 'ADMIN' && !staffList.some(s => s.id === currentUserId)) {
+        currentUserId = 'ADMIN';
+      }
+      select.innerHTML = `<option value="ADMIN" ${currentUserId === 'ADMIN' ? 'selected' : ''}>Admin / Principal (Full Access)</option>`;
+      staffList.forEach(staff => {
+        select.innerHTML += `
+          <option value="${staff.id}" ${currentUserId === staff.id ? 'selected' : ''}>
+            ${staff.name} (${staff.assignedClass} • ${staff.subject})
+          </option>
+        `;
+      });
+    }
+
+    function switchUser() {
+      currentUserId = document.getElementById('current-user-select').value;
+      const roleLabel = currentUserId === 'ADMIN'
+        ? 'Admin'
+        : staffList.find(s => s.id === currentUserId).name;
+      document.getElementById('stat-role').innerText = roleLabel;
+      document.getElementById('notif-dropdown').classList.remove('open');
+      renderAll();
+    }
+
+    function showSection(sectionId, element) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+
+      document.querySelectorAll('.nav-links li').forEach(li => li.classList.remove('active'));
+      if (element) element.classList.add('active');
+
+      const titleText = element && element.querySelector('span')
+        ? element.querySelector('span').innerText
+        : (element ? element.innerText : 'Dashboard Overview');
+      document.getElementById('page-title').innerText = titleText;
+      renderAll();
+    }
+
+    // --- HELP & DOUBT MESSAGING FUNCTIONS ---
+
+    function sendHelpMessage(e) {
+      e.preventDefault();
+      if (currentUserId === 'ADMIN') return;
+
+      const teacher = staffList.find(s => s.id === currentUserId);
+      if (!teacher) return;
+
+      const recipient = document.getElementById('msg-recipient').value;
+      const topic = document.getElementById('msg-topic').value;
+      const question = document.getElementById('msg-content').value.trim();
+      if (!question) return;
+
+      messageCounter++;
+      const nowTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      helpMessages.unshift({
+        msgId: 'MSG-' + String(messageCounter).padStart(2, '0'),
+        senderId: teacher.id,
+        senderName: teacher.name,
+        senderClass: teacher.assignedClass,
+        senderSubject: teacher.subject,
+        recipient,
+        topic,
+        question,
+        reply: '',
+        status: 'Open',
+        timestamp: `Today, ${nowTime}`
+      });
+
+      addNotification(
+        'ADMIN',
+        `New Q&A from ${teacher.name} (${teacher.subject})`,
+        `${topic}: ${question}`,
+        'messages'
+      );
+
+      document.getElementById('doubt-message-form').reset();
+      renderAll();
+      persistToSupabase();
+      alert(`Your Q&A message has been saved and sent to ${recipient}!`);
+    }
+
+    function replyToHelpMessage(msgId) {
+      if (currentUserId !== 'ADMIN') return;
+      const msg = helpMessages.find(m => m.msgId === msgId);
+      if (!msg) return;
+
+      const replyInput = document.getElementById(`reply-input-${msgId}`);
+      const replyText = replyInput.value.trim();
+      if (!replyText) {
+        alert('Please type a reply before sending.');
+        return;
+      }
+
+      msg.reply = replyText;
+      msg.status = 'Resolved';
+
+      addNotification(
+        msg.senderId,
+        `Admin Replied to Your Question (${msg.topic})`,
+        replyText,
+        'messages'
+      );
+
+      renderAll();
+      persistToSupabase();
+    }
+
+    function renderHelpMessages() {
+      const isAdmin = currentUserId === 'ADMIN';
+      document.getElementById('teacher-ask-card').style.display = !isAdmin ? 'block' : 'none';
+      document.getElementById('messages-list-title').innerText = isAdmin
+        ? 'Teacher Questions & Doubt Inbox (Admin / Head View)'
+        : 'My Sent Questions & Admin Replies';
+
+      const container = document.getElementById('help-messages-container');
+      const filterStatus = document.getElementById('msg-status-filter').value;
+
+      let visibleMessages = isAdmin
+        ? helpMessages
+        : helpMessages.filter(m => m.senderId === currentUserId);
+
+      if (filterStatus !== 'ALL') {
+        visibleMessages = visibleMessages.filter(m => m.status === filterStatus);
+      }
+
+      if (visibleMessages.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); padding: 12px 0;">No messages found for this filter.</p>`;
+      } else {
+        container.innerHTML = visibleMessages.map(msg => {
+          const isResolved = msg.status === 'Resolved';
+          const statusBadge = isResolved
+            ? `<span class="status status-approved">Resolved</span>`
+            : `<span class="status status-pending">Open • Waiting for Reply</span>`;
+
+          const replySection = msg.reply
+            ? `<div class="msg-reply-box"><strong>Admin / Head Reply:</strong> ${msg.reply}</div>`
+            : '';
+
+          const adminActionSection = isAdmin
+            ? `<div class="admin-reply-form">
+                <input type="text" id="reply-input-${msg.msgId}" placeholder="Write reply to ${msg.senderName}..." value="${msg.reply}" />
+                <button type="button" class="btn-primary btn-sm" onclick="replyToHelpMessage('${msg.msgId}')">
+                  ${msg.reply ? 'Update Reply' : 'Send Reply & Resolve'}
+                </button>
+              </div>`
+            : (!msg.reply ? `<div style="font-size:0.8rem; color:var(--text-muted);">Sent to <strong>${msg.recipient}</strong> — awaiting response.</div>` : '');
+
+          return `
+            <div class="message-thread ${isResolved ? 'resolved' : ''}">
+              <div class="msg-meta">
+                <div>
+                  <span class="msg-topic-tag">${msg.topic}</span>
+                  <strong style="margin-left: 8px;">${msg.senderName}</strong>
+                  <span style="color:var(--text-muted);">(${msg.senderClass} • ${msg.senderSubject}) → To: <strong>${msg.recipient}</strong></span>
+                </div>
+                <div>
+                  <span style="color:var(--text-muted); font-size:0.78rem; margin-right: 8px;">${msg.timestamp}</span>
+                  ${statusBadge}
+                </div>
+              </div>
+              <div class="msg-body">${msg.question}</div>
+              ${replySection}
+              ${adminActionSection}
+            </div>
+          `;
+        }).join('');
+      }
+
+      const openCount = helpMessages.filter(m => m.status === 'Open').length;
+      document.getElementById('stat-open-queries').innerText = openCount;
+      document.getElementById('nav-msg-badge').innerText = openCount;
+      document.getElementById('nav-msg-badge').style.display = openCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // --- EXAM & MARKS FUNCTIONS ---
+
+    function selectExam(examName) {
+      selectedExamTerm = examName;
+      document.querySelectorAll('.exam-tab-btn').forEach(btn => {
+        if (btn.getAttribute('data-exam') === examName) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+      renderConsolidatedMarkSheet();
+      renderSubjectWorkspace();
+    }
+
+    function getStudentSubjectScores(student, subject, examTerm) {
+      if (!student.marks[subject] || !student.marks[subject][examTerm]) {
+        return { th: 0, pr: 0 };
+      }
+      const entry = student.marks[subject][examTerm];
+      return {
+        th: Number(entry.th || 0),
+        pr: Number(entry.pr || 0)
+      };
+    }
+
+    function evaluateSubjectStatus(className, subject, th, pr) {
+      const cfg = getSubjectConfig(className, subject);
+      const thPassMark = cfg.thFull * 0.4;
+      const prPassMark = cfg.prFull * 0.4;
+      const totalObtained = th + pr;
+      const totalFull = cfg.thFull + cfg.prFull;
+
+      const passedTheory = cfg.thFull === 0 ? true : th >= thPassMark;
+      const passedPractical = cfg.prFull === 0 ? true : pr >= prPassMark;
+      const isSubjectPass = totalFull > 0 && passedTheory && passedPractical;
+
+      return {
+        th,
+        pr,
+        totalObtained,
+        totalFull,
+        isSubjectPass
+      };
+    }
+
+    function calculateLetterGrade(percentage, isAllSubjectsPassed) {
+      if (!isAllSubjectsPassed) return 'NG';
+      if (percentage >= 90) return 'A+';
+      if (percentage >= 80) return 'A';
+      if (percentage >= 70) return 'B+';
+      if (percentage >= 60) return 'B';
+      if (percentage >= 50) return 'C+';
+      if (percentage >= 40) return 'C';
+      return 'NG';
+    }
+
+    function getSubjectsForClass(className) {
+      const subjectSet = new Set();
+
+      staffList.forEach(staff => {
+        if (staff.assignedClass === className && staff.subject && staff.subject !== 'Accounts & Admin') {
+          subjectSet.add(staff.subject);
+        }
+      });
+
+      studentList.forEach(stu => {
+        if (stu.studentClass === className && stu.marks) {
+          Object.keys(stu.marks).forEach(subj => subjectSet.add(subj));
+        }
+      });
+
+      return Array.from(subjectSet);
+    }
+
+    function getConsolidatedRows(className, searchQuery = '') {
+      const subjects = getSubjectsForClass(className);
+      const classStudents = studentList.filter(stu => stu.studentClass === className);
+
+      const computed = classStudents.map(stu => {
+        let grandTotal = 0;
+        let grandFullMarks = 0;
+        let allSubjectsPassed = subjects.length > 0;
+        const subjectDetails = {};
+
+        subjects.forEach(subj => {
+          const { th, pr } = getStudentSubjectScores(stu, subj, selectedExamTerm);
+          const evalResult = evaluateSubjectStatus(className, subj, th, pr);
+          subjectDetails[subj] = evalResult;
+          grandTotal += evalResult.totalObtained;
+          grandFullMarks += evalResult.totalFull;
+
+          if (!evalResult.isSubjectPass) {
+            allSubjectsPassed = false;
+          }
+        });
+
+        const percentage = grandFullMarks > 0 ? ((grandTotal / grandFullMarks) * 100) : 0;
+        const finalGrade = calculateLetterGrade(percentage, allSubjectsPassed);
+
+        return {
+          student: stu,
+          subjects,
+          subjectDetails,
+          grandTotal,
+          grandFullMarks,
+          percentage,
+          isPass: allSubjectsPassed,
+          grade: finalGrade
+        };
+      });
+
+      const passedTotals = computed
+        .filter(r => r.isPass)
+        .map(r => r.grandTotal)
+        .sort((a, b) => b - a);
+
+      computed.forEach(row => {
+        row.rank = row.isPass ? (passedTotals.indexOf(row.grandTotal) + 1) : null;
+      });
+
+      const q = searchQuery.trim().toLowerCase();
+      return computed.filter(row =>
+        row.student.name.toLowerCase().includes(q) ||
+        row.student.id.toLowerCase().includes(q) ||
+        String(row.student.roll).includes(q)
+      );
+    }
+
+    function formatOrdinal(n) {
+      if (!n) return '—';
+      const s = ['th', 'st', 'nd', 'rd'];
+      const v = n % 100;
+      return n + (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
+    function renderConsolidatedMarkSheet() {
+      const container = document.getElementById('consolidated-marksheet-container');
+      if (!container) return;
+
+      const classSelect = document.getElementById('marksheet-class-filter');
+      const isAdmin = currentUserId === 'ADMIN';
+      const currentTeacher = !isAdmin ? staffList.find(s => s.id === currentUserId) : null;
+
+      if (!isAdmin && currentTeacher && currentTeacher.assignedClass !== 'All Classes') {
+        classSelect.value = currentTeacher.assignedClass;
+        classSelect.disabled = true;
+      } else {
+        classSelect.disabled = false;
+      }
+
+      const selectedClass = classSelect.value;
+      const searchQuery = document.getElementById('marksheet-search')?.value || '';
+
+      document.getElementById('marksheet-card-title').innerText =
+        `Consolidated Student Mark Sheet — ${selectedClass} (${selectedExamTerm})`;
+
+      const subjects = getSubjectsForClass(selectedClass);
+      const rows = getConsolidatedRows(selectedClass, searchQuery);
+
+      if (rows.length === 0) {
+        container.innerHTML = `<p style="color:var(--text-muted); padding: 14px 0;">No students found in ${selectedClass}.</p>`;
+        return;
+      }
+
+      const subjectHeaders = subjects.map(subj => {
+        const cfg = getSubjectConfig(selectedClass, subj);
+        const totalFM = cfg.thFull + cfg.prFull;
+        return `<th>${subj}<br><span style="font-size:0.72rem; font-weight:500;">(TH:${cfg.thFull} + PR:${cfg.prFull} = ${totalFM})</span></th>`;
+      }).join('');
+
+      let bodyHtml = '';
+      rows.forEach(row => {
+        const stu = row.student;
+        const subjectCells = subjects.map(subj => {
+          const det = row.subjectDetails[subj];
+          const cfg = getSubjectConfig(selectedClass, subj);
+          const prPart = cfg.prFull > 0 ? ` + ${det.pr}` : '';
+          const breakdown = cfg.prFull > 0 ? `<span class="sub-score-note">TH:${det.th}${prPart}</span>` : '';
+
+          return `
+            <td class="${!det.isSubjectPass ? 'mark-fail' : ''}">
+              <strong>${det.totalObtained}</strong> / ${det.totalFull}
+              ${!det.isSubjectPass ? ' (NG)' : ''}
+              ${breakdown}
+            </td>
+          `;
+        }).join('');
+
+        bodyHtml += `
+          <tr>
+            <td>${stu.roll}</td>
+            <td><strong>${stu.name}</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(${stu.id})</span></td>
+            ${subjectCells}
+            <td><strong>${row.grandTotal}</strong> / ${row.grandFullMarks}</td>
+            <td><strong>${row.percentage.toFixed(1)}%</strong></td>
+            <td>
+              <span class="status ${row.grade === 'NG' ? 'status-absent' : 'status-approved'}">
+                ${row.grade}
+              </span>
+            </td>
+            <td>
+              <span class="status ${row.isPass ? 'status-approved' : 'status-absent'}">
+                ${row.isPass ? 'Pass' : 'Fail (NG)'}
+              </span>
+            </td>
+            <td><strong>${formatOrdinal(row.rank)}</strong></td>
+          </tr>
+        `;
+      });
+
+      container.innerHTML = `
+        <table>
+          <thead>
+            <tr>
+              <th>Roll</th>
+              <th>Student Name</th>
+              ${subjectHeaders}
+              <th>Grand Total</th>
+              <th>Percentage</th>
+              <th>Final Grade</th>
+              <th>Result</th>
+              <th>Rank</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${bodyHtml}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function exportConsolidatedMarkSheetToExcel() {
+      const selectedClass = document.getElementById('marksheet-class-filter').value;
+      const searchQuery = document.getElementById('marksheet-search')?.value || '';
+      const subjects = getSubjectsForClass(selectedClass);
+      const rows = getConsolidatedRows(selectedClass, searchQuery);
+
+      if (rows.length === 0) {
+        alert('No student records to export.');
+        return;
+      }
+
+      const totalCols = 7 + subjects.length;
+      const subjectHeaders = subjects.map(s => {
+        const cfg = getSubjectConfig(selectedClass, s);
+        return `<th>${s} (TH:${cfg.thFull} + PR:${cfg.prFull} = ${cfg.thFull + cfg.prFull})</th>`;
+      }).join('');
+
+      let excelTable = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <table border="1" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+            <tr>
+              <th colspan="${totalCols}" style="font-size: 16pt; background-color: #dcfce7; color: #14532d; height: 35px;">
+                Unique Nepal Academy — Lokanthali, Bhaktapur
+              </th>
+            </tr>
+            <tr>
+              <th colspan="${totalCols}" style="font-size: 11pt; background-color: #f0fdf4; color: #15803d; height: 25px;">
+                Consolidated Student Mark Sheet • Class: ${selectedClass} • ${selectedExamTerm}
+              </th>
+            </tr>
+            <tr style="background-color: #22c55e; color: #ffffff; font-weight: bold;">
+              <th>Roll No.</th>
+              <th>Student ID</th>
+              <th>Student Name</th>
+              ${subjectHeaders}
+              <th>Grand Total</th>
+              <th>Percentage</th>
+              <th>Final Grade</th>
+              <th>Result</th>
+              <th>Rank</th>
+            </tr>
+      `;
+
+      rows.forEach(row => {
+        const subjectCells = subjects.map(subj => {
+          const det = row.subjectDetails[subj];
+          return `<td>${det.totalObtained} (TH:${det.th}, PR:${det.pr})${!det.isSubjectPass ? ' [NG]' : ''}</td>`;
+        }).join('');
+
+        excelTable += `
+          <tr>
+            <td>${row.student.roll}</td>
+            <td>${row.student.id}</td>
+            <td>${row.student.name}</td>
+            ${subjectCells}
+            <td><strong>${row.grandTotal} / ${row.grandFullMarks}</strong></td>
+            <td>${row.percentage.toFixed(1)}%</td>
+            <td><strong>${row.grade}</strong></td>
+            <td>${row.isPass ? 'Pass' : 'Fail (NG)'}</td>
+            <td>${formatOrdinal(row.rank)}</td>
+          </tr>
+        `;
+      });
+
+      excelTable += `</table></body></html>`;
+
+      const safeClass = selectedClass.replace(/\s+/g, '_');
+      const safeExam = selectedExamTerm.replace(/\s+/g, '_');
+      downloadExcelBlob(excelTable, `Unique_Nepal_Academy_${safeClass}_${safeExam}_MarkSheet.xls`);
+    }
+
+    function printConsolidatedMarkSheet() {
+      const selectedClass = document.getElementById('marksheet-class-filter').value;
+      document.getElementById('print-marksheet-subtitle').innerText =
+        `OFFICIAL RESULT LEDGER • ${selectedClass.toUpperCase()} • ${selectedExamTerm.toUpperCase()}`;
+      document.getElementById('directory-print-header').style.display = 'none';
+      document.getElementById('marksheet-print-header').style.display = 'block';
+      window.print();
+      document.getElementById('marksheet-print-header').style.display = '';
+      document.getElementById('directory-print-header').style.display = '';
+    }
+
+    // --- STUDENT DIRECTORY & REQUESTS ---
+
+    function getFilteredStudents() {
+      const classFilterDropdown = document.getElementById('student-class-filter');
+      const selectedClass = classFilterDropdown ? classFilterDropdown.value : 'ALL';
+      const searchQuery = (document.getElementById('student-search')?.value || '').trim().toLowerCase();
+
+      return studentList.filter(stu => {
+        const matchesClass = selectedClass === 'ALL' || stu.studentClass === selectedClass;
+        const matchesSearch =
+          stu.name.toLowerCase().includes(searchQuery) ||
+          stu.id.toLowerCase().includes(searchQuery) ||
+          stu.phone.toLowerCase().includes(searchQuery);
+        return matchesClass && matchesSearch;
+      });
+    }
+
+    function exportStudentsToExcel() {
+      const filteredStudents = getFilteredStudents();
+      if (filteredStudents.length === 0) {
+        alert('No students available to export for the selected filter.');
+        return;
+      }
+
+      const selectedClass = document.getElementById('student-class-filter').value;
+      const classLabel = selectedClass === 'ALL' ? 'All Classes' : selectedClass;
+
+      let excelTable = `
+        <html xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head><meta charset="UTF-8"></head>
+        <body>
+          <table border="1" style="border-collapse: collapse; font-family: Arial, sans-serif;">
+            <tr>
+              <th colspan="6" style="font-size: 16pt; background-color: #dcfce7; color: #14532d; height: 35px;">
+                Unique Nepal Academy — Lokanthali, Bhaktapur
+              </th>
+            </tr>
+            <tr>
+              <th colspan="6" style="font-size: 11pt; background-color: #f0fdf4; color: #15803d; height: 25px;">
+                Student Directory (${classLabel})
+              </th>
+            </tr>
+            <tr style="background-color: #22c55e; color: #ffffff; font-weight: bold;">
+              <th>Student ID</th>
+              <th>Roll No.</th>
+              <th>Student Name</th>
+              <th>Class</th>
+              <th>Parent Phone</th>
+              <th>Added / Approved By</th>
+            </tr>
+      `;
+
+      filteredStudents.forEach(stu => {
+        excelTable += `
+          <tr>
+            <td>${stu.id}</td>
+            <td>${stu.roll}</td>
+            <td>${stu.name}</td>
+            <td>${stu.studentClass}</td>
+            <td>${stu.phone}</td>
+            <td>${stu.addedBy}</td>
+          </tr>
+        `;
+      });
+
+      excelTable += `</table></body></html>`;
+
+      downloadExcelBlob(excelTable, `Unique_Nepal_Academy_${classLabel.replace(/\s+/g, '_')}_Students.xls`);
+    }
+
+    function downloadExcelBlob(htmlContent, filename) {
+      const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+      const url = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+      downloadLink.href = url;
+      downloadLink.download = filename;
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+      document.body.removeChild(downloadLink);
+      URL.revokeObjectURL(url);
+    }
+
+    function printStudentSheet() {
+      const selectedClass = document.getElementById('student-class-filter').value;
+      const classLabel = selectedClass === 'ALL' ? 'ALL CLASSES' : selectedClass.toUpperCase();
+      document.getElementById('print-sheet-subtitle').innerText =
+        `OFFICIAL STUDENT DIRECTORY • ${classLabel}`;
+      document.getElementById('marksheet-print-header').style.display = 'none';
+      document.getElementById('directory-print-header').style.display = 'block';
+      window.print();
+      document.getElementById('marksheet-print-header').style.display = '';
+      document.getElementById('directory-print-header').style.display = '';
+    }
+
+    function adminAddStudent(e) {
+      e.preventDefault();
+      if (currentUserId !== 'ADMIN') return;
+
+      const name = document.getElementById('stu-name').value.trim();
+      const studentClass = document.getElementById('stu-class').value;
+      const roll = parseInt(document.getElementById('stu-roll').value, 10);
+      const phone = document.getElementById('stu-phone').value.trim();
+
+      studentCounter++;
+      studentList.push({
+        id: 'STU-' + studentCounter,
+        roll,
+        name,
+        studentClass,
+        phone,
+        addedBy: 'Admin',
+        marks: {}
+      });
+
+      document.getElementById('admin-student-form').reset();
+      renderAll();
+      persistToSupabase();
+      alert(`${name} added to ${studentClass} and saved to Supabase!`);
+    }
+
+    function submitStudentRequest(e) {
+      e.preventDefault();
+      if (currentUserId === 'ADMIN') return;
+
+      const teacher = staffList.find(s => s.id === currentUserId);
+      if (!teacher) return;
+
+      const studentName = document.getElementById('req-stu-name').value.trim();
+      const roll = parseInt(document.getElementById('req-stu-roll').value, 10);
+      const phone = document.getElementById('req-stu-phone').value.trim();
+
+      requestCounter++;
+      studentRequests.unshift({
+        reqId: 'REQ-' + String(requestCounter).padStart(2, '0'),
+        teacherId: teacher.id,
+        teacherName: teacher.name,
+        studentClass: teacher.assignedClass,
+        studentName,
+        roll,
+        phone,
+        status: 'Pending'
+      });
+
+      addNotification(
+        'ADMIN',
+        `Student Add Request — ${teacher.name}`,
+        `Requested to add ${studentName} (Roll ${roll}) to ${teacher.assignedClass}.`,
+        'students'
+      );
+
+      document.getElementById('teacher-student-request-form').reset();
+      renderAll();
+      persistToSupabase();
+      alert(`Request sent to Admin and saved to Supabase!`);
+    }
+
+    function handleStudentRequest(reqId, decision) {
+      if (currentUserId !== 'ADMIN') return;
+
+      const req = studentRequests.find(r => r.reqId === reqId);
+      if (!req || req.status !== 'Pending') return;
+
+      req.status = decision;
+
+      if (decision === 'Approved') {
+        studentCounter++;
+        studentList.push({
+          id: 'STU-' + studentCounter,
+          roll: req.roll,
+          name: req.studentName,
+          studentClass: req.studentClass,
+          phone: req.phone,
+          addedBy: `${req.teacherName} (Approved)`,
+          marks: {}
+        });
+      }
+
+      addNotification(
+        req.teacherId,
+        `Student Request ${decision}`,
+        `Admin ${decision.toLowerCase()} your request to add ${req.studentName} (${req.studentClass}).`,
+        'students'
+      );
+
+      renderAll();
+      persistToSupabase();
+    }
+
+    function deleteStudent(studentId) {
+      if (currentUserId !== 'ADMIN') return;
+      const idx = studentList.findIndex(s => s.id === studentId);
+      if (idx === -1) return;
+
+      if (confirm(`Remove student ${studentList[idx].name} (${studentId})?`)) {
+        studentList.splice(idx, 1);
+        renderAll();
+        persistToSupabase();
+      }
+    }
+
+    function renderStudentSection() {
+      const isAdmin = currentUserId === 'ADMIN';
+      const currentTeacher = !isAdmin ? staffList.find(s => s.id === currentUserId) : null;
+
+      document.getElementById('admin-add-student-card').style.display = isAdmin ? 'block' : 'none';
+      document.getElementById('teacher-request-student-card').style.display = !isAdmin ? 'block' : 'none';
+      document.getElementById('req-action-header').style.display = isAdmin ? 'table-cell' : 'none';
+      document.getElementById('stu-delete-header').style.display = isAdmin ? 'table-cell' : 'none';
+
+      const classFilterDropdown = document.getElementById('student-class-filter');
+
+      if (!isAdmin && currentTeacher) {
+        document.getElementById('teacher-assigned-class-label').innerText = currentTeacher.assignedClass;
+        document.getElementById('requests-table-title').innerText = 'My Submitted Student Requests';
+        document.getElementById('enrolled-students-title').innerText = `Enrolled Students — ${currentTeacher.assignedClass}`;
+        classFilterDropdown.value = currentTeacher.assignedClass;
+        classFilterDropdown.disabled = true;
+      } else {
+        document.getElementById('requests-table-title').innerText = 'Teacher Requests to Add Students (Admin Approval Queue)';
+        document.getElementById('enrolled-students-title').innerText = 'All Enrolled Students Directory';
+        classFilterDropdown.disabled = false;
+      }
+
+      const reqBody = document.getElementById('student-requests-body');
+      reqBody.innerHTML = '';
+
+      const visibleRequests = isAdmin
+        ? studentRequests
+        : studentRequests.filter(r => r.teacherId === currentUserId);
+
+      if (visibleRequests.length === 0) {
+        reqBody.innerHTML = `<tr><td colspan="8" style="text-align:center; color:var(--text-muted);">No student requests found.</td></tr>`;
+      } else {
+        visibleRequests.forEach(req => {
+          const badgeClass = req.status === 'Approved'
+            ? 'status-approved'
+            : req.status === 'Rejected'
+              ? 'status-rejected'
+              : 'status-pending';
+
+          let actionCell = '';
+          if (isAdmin) {
+            actionCell = req.status === 'Pending'
+              ? `<td>
+                  <button class="btn-sm btn-success" onclick="handleStudentRequest('${req.reqId}', 'Approved')">Approve</button>
+                  <button class="btn-sm btn-danger" onclick="handleStudentRequest('${req.reqId}', 'Rejected')">Reject</button>
+                 </td>`
+              : `<td><span style="color:var(--text-muted); font-size:0.8rem;">Processed</span></td>`;
+          }
+
+          reqBody.innerHTML += `
+            <tr>
+              <td><strong>${req.reqId}</strong></td>
+              <td>${req.teacherName}</td>
+              <td>${req.studentClass}</td>
+              <td><strong>${req.studentName}</strong></td>
+              <td>${req.roll}</td>
+              <td>${req.phone}</td>
+              <td><span class="status ${badgeClass}">${req.status}</span></td>
+              ${actionCell}
+            </tr>
+          `;
+        });
+      }
+
+      const stuBody = document.getElementById('enrolled-students-body');
+      stuBody.innerHTML = '';
+      const filteredStudents = getFilteredStudents();
+
+      if (filteredStudents.length === 0) {
+        stuBody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">No students found for this class.</td></tr>`;
+      } else {
+        filteredStudents.forEach(stu => {
+          stuBody.innerHTML += `
+            <tr>
+              <td><strong>${stu.id}</strong></td>
+              <td>${stu.roll}</td>
+              <td>${stu.name}</td>
+              <td><span class="status status-present">${stu.studentClass}</span></td>
+              <td>${stu.phone}</td>
+              <td>${stu.addedBy}</td>
+              ${isAdmin ? `<td class="no-print"><button class="btn-sm btn-danger" onclick="deleteStudent('${stu.id}')">Remove</button></td>` : ''}
+            </tr>
+          `;
+        });
+      }
+
+      const pendingCount = studentRequests.filter(r => r.status === 'Pending').length;
+      document.getElementById('stat-students').innerText = studentList.length;
+      document.getElementById('nav-req-badge').innerText = pendingCount;
+      document.getElementById('nav-req-badge').style.display = pendingCount > 0 ? 'inline-block' : 'none';
+    }
+
+    // --- PERMISSIONS & STAFF FUNCTIONS ---
+
+    function togglePermission(staffId, permType) {
+      if (currentUserId !== 'ADMIN') return;
+      const staff = staffList.find(s => s.id === staffId);
+      if (!staff) return;
+
+      staff[permType] = !staff[permType];
+
+      if (permType === 'canEdit' && staff.canEdit) staff.canView = true;
+      if (permType === 'canView' && !staff.canView) staff.canEdit = false;
+
+      renderAll();
+      persistToSupabase();
+    }
+
+    function addStaff(e) {
+      e.preventDefault();
+      if (currentUserId !== 'ADMIN') return;
+
+      const name = document.getElementById('staff-name').value.trim();
+      const role = document.getElementById('staff-role').value;
+      const assignedClass = document.getElementById('staff-class').value;
+      const subject = document.getElementById('staff-subject').value.trim();
+      const phone = document.getElementById('staff-phone').value.trim();
+
+      staffCounter++;
+      const newId = 'STF-' + String(staffCounter).padStart(2, '0');
+
+      staffList.push({
+        id: newId,
+        name,
+        role,
+        assignedClass,
+        subject,
+        phone,
+        status: 'Present',
+        canView: true,
+        canEdit: false
+      });
+
+      document.getElementById('staff-form').reset();
+      renderUserSwitcher();
+      renderAll();
+      persistToSupabase();
+    }
+
+    function deleteStaffById(staffId) {
+      if (currentUserId !== 'ADMIN') return;
+      const index = staffList.findIndex(s => s.id === staffId);
+      if (index === -1) return;
+
+      if (confirm(`Remove ${staffList[index].name} (${staffId})?`)) {
+        staffList.splice(index, 1);
+        renderUserSwitcher();
+        renderAll();
+        persistToSupabase();
+      }
+    }
+
+    function removeStaffByCriteria(e) {
+      e.preventDefault();
+      if (currentUserId !== 'ADMIN') return;
+
+      const field = document.getElementById('remove-by-field').value;
+      const query = document.getElementById('remove-by-value').value.trim().toLowerCase();
+      if (!query) return;
+
+      const matches = staffList.filter(staff => String(staff[field]).toLowerCase() === query);
+      if (matches.length === 0) {
+        alert(`No staff member found matching ${field}: "${document.getElementById('remove-by-value').value}"`);
+        return;
+      }
+
+      const matchSummary = matches.map(m => `• ${m.id}: ${m.name} (${m.assignedClass} - ${m.subject})`).join('\n');
+      if (!confirm(`Found ${matches.length} matching staff record(s):\n\n${matchSummary}\n\nRemove permanently?`)) return;
+
+      staffList = staffList.filter(staff => String(staff[field]).toLowerCase() !== query);
+      document.getElementById('remove-staff-form').reset();
+      renderUserSwitcher();
+      renderAll();
+      persistToSupabase();
+    }
+
+    // --- SUBJECT MARKS ENTRY WORKSPACE ---
+
+    function updateSubjectFullMarks(staffId) {
+      const staff = staffList.find(s => s.id === staffId);
+      if (!staff) return;
+
+      const thFull = Math.max(0, Number(document.getElementById(`th-full-${staff.id}`).value) || 0);
+      const prFull = Math.max(0, Number(document.getElementById(`pr-full-${staff.id}`).value) || 0);
+
+      if (thFull + prFull === 0) {
+        alert('Total full marks must be greater than 0.');
+        return;
+      }
+
+      subjectConfigs[`${staff.assignedClass}::${staff.subject}`] = { thFull, prFull };
+      renderAll();
+      persistToSupabase();
+      alert(`Updated ${staff.subject} (${staff.assignedClass}) Full Marks to ${thFull + prFull} and saved to Supabase!`);
+    }
+
+    function renderSubjectWorkspace() {
+      const workspace = document.getElementById('subject-workspace');
+      const banner = document.getElementById('subject-permission-banner');
+      workspace.innerHTML = '';
+
+      if (currentUserId === 'ADMIN') {
+        banner.style.display = 'block';
+        banner.innerHTML = `<strong>Admin Mode (${selectedExamTerm}):</strong> Customize Theory/Practical full marks and enter student scores below; all updates sync to Supabase and the <strong>Student Mark Sheet</strong>.`;
+
+        staffList.forEach(staff => {
+          workspace.innerHTML += createSubjectCard(staff, true, true);
+        });
+        return;
+      }
+
+      const teacher = staffList.find(s => s.id === currentUserId);
+      if (!teacher) return;
+
+      if (!teacher.canView) {
+        banner.style.display = 'block';
+        banner.innerHTML = `<strong>Access Restricted:</strong> Admin has not granted you permission to view or edit <strong>${teacher.subject} (${teacher.assignedClass})</strong> yet.`;
+        return;
+      }
+
+      if (teacher.canView && !teacher.canEdit) {
+        banner.style.display = 'block';
+        banner.innerHTML = `<strong>Read-Only Mode (${selectedExamTerm}):</strong> Admin granted you <strong>View</strong> permission for <strong>${teacher.subject} (${teacher.assignedClass})</strong>, but editing is locked.`;
+      } else {
+        banner.style.display = 'none';
+      }
+
+      workspace.innerHTML = createSubjectCard(teacher, teacher.canView, teacher.canEdit);
+    }
+
+    function createSubjectCard(staff, canView, canEdit) {
+      const badge = canEdit
+        ? `<span class="status status-approved">Editing: ${selectedExamTerm}</span>`
+        : `<span class="status status-locked">Read-Only: ${selectedExamTerm}</span>`;
+
+      const cfg = getSubjectConfig(staff.assignedClass, staff.subject);
+      const totalFullMarks = cfg.thFull + cfg.prFull;
+      const passMarksTotal = (totalFullMarks * 0.4).toFixed(1).replace(/\.0$/, '');
+
+      const classStudents = studentList.filter(stu => stu.studentClass === staff.assignedClass);
+
+      let studentRowsHtml = '';
+      if (classStudents.length === 0) {
+        studentRowsHtml = `<tr><td colspan="6" style="color:var(--text-muted); text-align:center;">No students enrolled in ${staff.assignedClass} yet.</td></tr>`;
+      } else {
+        classStudents.forEach(stu => {
+          const { th, pr } = getStudentSubjectScores(stu, staff.subject, selectedExamTerm);
+          const evalRes = evaluateSubjectStatus(staff.assignedClass, staff.subject, th, pr);
+
+          studentRowsHtml += `
+            <tr>
+              <td>${stu.roll}</td>
+              <td><strong>${stu.name}</strong> <span style="color:var(--text-muted); font-size:0.8rem;">(${stu.id})</span></td>
+              <td>
+                <input
+                  type="number"
+                  class="th-input-${staff.id}"
+                  data-student-id="${stu.id}"
+                  value="${th}"
+                  min="0"
+                  max="${cfg.thFull}"
+                  style="max-width: 95px; font-weight: 600;"
+                  ${!canEdit || cfg.thFull === 0 ? 'disabled' : ''}
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  class="pr-input-${staff.id}"
+                  data-student-id="${stu.id}"
+                  value="${pr}"
+                  min="0"
+                  max="${cfg.prFull}"
+                  style="max-width: 95px; font-weight: 600;"
+                  ${!canEdit || cfg.prFull === 0 ? 'disabled' : ''}
+                />
+              </td>
+              <td><strong>${evalRes.totalObtained}</strong> / ${totalFullMarks}</td>
+              <td>
+                <span class="status ${evalRes.isSubjectPass ? 'status-approved' : 'status-absent'}">
+                  ${evalRes.isSubjectPass ? 'Pass' : 'Fail (NG)'}
+                </span>
+              </td>
+            </tr>
+          `;
+        });
+      }
+
+      return `
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>${staff.subject} — ${staff.assignedClass} (Teacher: ${staff.name})</h3>
+              <span style="font-size: 0.82rem; color: var(--text-muted);">
+                Active Term: <strong>${selectedExamTerm}</strong> • Full Marks: <strong>${totalFullMarks}</strong> • Pass Marks (40%): <strong>${passMarksTotal}</strong>
+              </span>
+            </div>
+            ${badge}
+          </div>
+
+          <div class="full-marks-config">
+            <div class="config-field">
+              <label for="th-full-${staff.id}">Theory Full Marks:</label>
+              <input type="number" id="th-full-${staff.id}" value="${cfg.thFull}" min="0" max="100" ${!canEdit ? 'disabled' : ''} />
+            </div>
+            <div class="config-field">
+              <label for="pr-full-${staff.id}">Practical Full Marks:</label>
+              <input type="number" id="pr-full-${staff.id}" value="${cfg.prFull}" min="0" max="100" ${!canEdit ? 'disabled' : ''} />
+            </div>
+            <div class="config-field">
+              <span>Total Full Marks: <strong>${totalFullMarks}</strong></span>
+            </div>
+            ${canEdit ? `<button type="button" class="btn-outline btn-sm" onclick="updateSubjectFullMarks('${staff.id}')">Apply Full Marks</button>` : ''}
+          </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Roll</th>
+                <th>Student Name</th>
+                <th>Theory (Out of ${cfg.thFull})</th>
+                <th>Practical (Out of ${cfg.prFull})</th>
+                <th>Subject Total (${totalFullMarks})</th>
+                <th>Subject Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${studentRowsHtml}
+            </tbody>
+          </table>
+          ${canEdit ? `<button class="btn-primary" style="margin-top: 14px;" onclick="saveSubjectChanges('${staff.id}')">Save ${selectedExamTerm} Marks</button>` : ''}
+        </div>
+      `;
+    }
+
+    function saveSubjectChanges(staffId) {
+      const staff = staffList.find(s => s.id === staffId);
+      if (!staff) return;
+
+      const cfg = getSubjectConfig(staff.assignedClass, staff.subject);
+      const thInputs = document.querySelectorAll(`.th-input-${staffId}`);
+      const prInputs = document.querySelectorAll(`.pr-input-${staffId}`);
+
+      let exceededLimit = false;
+
+      thInputs.forEach((thInput, idx) => {
+        const stuId = thInput.getAttribute('data-student-id');
+        const prInput = prInputs[idx];
+        const stu = studentList.find(s => s.id === stuId);
+
+        const thVal = Number(thInput.value) || 0;
+        const prVal = Number(prInput.value) || 0;
+
+        if (thVal > cfg.thFull || prVal > cfg.prFull || thVal < 0 || prVal < 0) {
+          exceededLimit = true;
+        }
+
+        if (stu) {
+          if (!stu.marks[staff.subject]) {
+            stu.marks[staff.subject] = {};
+          }
+          stu.marks[staff.subject][selectedExamTerm] = {
+            th: Math.min(cfg.thFull, Math.max(0, thVal)),
+            pr: Math.min(cfg.prFull, Math.max(0, prVal))
+          };
+        }
+      });
+
+      renderAll();
+      persistToSupabase();
+      if (exceededLimit) {
+        alert(`Some marks exceeded the set Full Marks (Theory: ${cfg.thFull}, Practical: ${cfg.prFull}) and were capped automatically.`);
+      } else {
+        alert(`Saved ${selectedExamTerm} Theory & Practical marks for ${staff.subject} to Supabase!`);
+      }
+    }
+
+    // --- STAFF DIRECTORY & ATTENDANCE TABLES ---
+
+    function renderTables() {
+      const isAdmin = currentUserId === 'ADMIN';
+      document.getElementById('add-staff-card').style.display = isAdmin ? 'block' : 'none';
+      document.getElementById('remove-staff-card').style.display = isAdmin ? 'block' : 'none';
+      document.getElementById('admin-only-notice').style.display = isAdmin ? 'none' : 'block';
+      document.getElementById('action-col-header').style.display = isAdmin ? 'table-cell' : 'none';
+
+      const searchTerm = (document.getElementById('directory-search')?.value || '').trim().toLowerCase();
+      const staffBody = document.getElementById('staff-table-body');
+      const attBody = document.getElementById('attendance-table-body');
+      staffBody.innerHTML = '';
+      attBody.innerHTML = '';
+
+      staffList.forEach(staff => {
+        const statusClass = staff.status === 'Present' ? 'status-present' : 'status-absent';
+        attBody.innerHTML += `
+          <tr>
+            <td><strong>${staff.id}</strong></td>
+            <td>${staff.name}</td>
+            <td>${staff.assignedClass}</td>
+            <td><span class="status ${statusClass}">${staff.status}</span></td>
+            <td>
+              <button class="btn-sm btn-success" onclick="markAttendance('${staff.id}', 'Present')">Present</button>
+              <button class="btn-sm btn-danger" onclick="markAttendance('${staff.id}', 'Absent')">Absent</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      const filteredStaff = staffList.filter(staff =>
+        staff.id.toLowerCase().includes(searchTerm) ||
+        staff.name.toLowerCase().includes(searchTerm) ||
+        staff.role.toLowerCase().includes(searchTerm) ||
+        staff.assignedClass.toLowerCase().includes(searchTerm) ||
+        staff.subject.toLowerCase().includes(searchTerm) ||
+        staff.phone.toLowerCase().includes(searchTerm)
+      );
+
+      if (filteredStaff.length === 0) {
+        staffBody.innerHTML = `<tr><td colspan="9" style="text-align:center; color:var(--text-muted);">No matching staff members found.</td></tr>`;
+      } else {
+        filteredStaff.forEach(staff => {
+          staffBody.innerHTML += `
+            <tr>
+              <td><strong>${staff.id}</strong></td>
+              <td>${staff.name}</td>
+              <td>${staff.role}</td>
+              <td><span class="status status-present">${staff.assignedClass}</span></td>
+              <td><strong>${staff.subject}</strong></td>
+              <td>${staff.phone}</td>
+              <td>
+                <input type="checkbox" class="perm-checkbox"
+                  ${staff.canView ? 'checked' : ''}
+                  ${!isAdmin ? 'disabled' : ''}
+                  onchange="togglePermission('${staff.id}', 'canView')" />
+              </td>
+              <td>
+                <input type="checkbox" class="perm-checkbox"
+                  ${staff.canEdit ? 'checked' : ''}
+                  ${!isAdmin ? 'disabled' : ''}
+                  onchange="togglePermission('${staff.id}', 'canEdit')" />
+              </td>
+              ${isAdmin ? `<td><button class="btn-sm btn-danger" onclick="deleteStaffById('${staff.id}')">Delete</button></td>` : ''}
+            </tr>
+          `;
+        });
+      }
+
+      document.getElementById('stat-total').innerText = staffList.length;
+    }
+
+    function markAttendance(staffId, status) {
+      const staff = staffList.find(s => s.id === staffId);
+      if (staff) {
+        staff.status = status;
+        renderAll();
+        persistToSupabase();
+      }
+    }
+
+    function updateLeave(id, newStatus) {
+      const badge = document.getElementById('leave-status-' + id);
+      badge.innerText = newStatus;
+      badge.className = 'status ' + (newStatus === 'Approved' ? 'status-approved' : 'status-rejected');
+    }
+
+    function postNotice() {
+      const input = document.getElementById('notice-input');
+      if (!input.value.trim()) return;
+      const list = document.getElementById('notice-list');
+      list.innerHTML = `
+        <div style="padding: 12px; border-left: 4px solid var(--primary); background: var(--primary-tint); margin-bottom: 10px;">
+          <strong>New Notice:</strong> ${input.value}
+        </div>
+      ` + list.innerHTML;
+      input.value = '';
+    }
+
+    function renderAll() {
+      renderNotifications();
+      renderConsolidatedMarkSheet();
+      renderStudentSection();
+      renderTables();
+      renderSubjectWorkspace();
+      renderHelpMessages();
+    }
+
+    // Initial Load from Supabase + Local Backup
+    loadFromSupabase(false);
+  </script>
+</body>
+
+</html>
